@@ -82,7 +82,7 @@ interface IOMonadErrorInstance : MonadError<ForIO, Throwable>, IOMonadInstance {
 }
 
 @extension
-interface IOBracketInstance : IOMonadErrorInstance, Bracket<ForIO, Throwable> {
+interface IOBracketInstance : Bracket<ForIO, Throwable>, IOMonadErrorInstance {
   override fun <A, B> Kind<ForIO, A>.bracketCase(use: (A) -> Kind<ForIO, B>, release: (A, ExitCase<Throwable>) -> Kind<ForIO, Unit>): IO<B> =
     this@bracketCase.fix().bracketCase({ a -> use(a).fix() }, { a, e -> release(a, e).fix() })
 
