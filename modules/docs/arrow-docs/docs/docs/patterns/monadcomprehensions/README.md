@@ -85,6 +85,7 @@ Let's see a minimal example.
 import arrow.*
 import arrow.effects.*
 import arrow.typeclasses.*
+import arrow.effects.instances.io.monad.*
 
 IO.monad().binding {
   1
@@ -206,7 +207,7 @@ Note that while most data types include an instance of [`Monad`]({{ '/docs/typec
 ### What about those threads?
 
 Arrow uses the same abstraction as coroutines to group threads and other contexts of execution: `CoroutineContext`.
-There are multiple default values and wrappers for common cases in both the standard library, and the extension library [kotlinx.coroutines](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/-coroutine-dispatcher/index.html).
+There are multiple default values and wrappers for common cases in both the standard library, and the extension library [kotlinx.coroutines](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-dispatcher/index.html).
 
 #### Blocking thread jumps
 

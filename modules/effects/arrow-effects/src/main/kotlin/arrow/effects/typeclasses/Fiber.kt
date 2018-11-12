@@ -24,6 +24,10 @@ interface Fiber<F, A> {
    */
   val join: Kind<F, A>
 
+  operator fun component1(): Kind<F, A> = join
+  operator fun component2(): Kind<F, Unit> = cancel
+
+
   companion object {
 
     /**
