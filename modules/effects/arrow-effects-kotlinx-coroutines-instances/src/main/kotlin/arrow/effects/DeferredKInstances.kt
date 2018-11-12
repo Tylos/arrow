@@ -4,27 +4,14 @@ import arrow.Kind
 import arrow.core.*
 import arrow.deprecation.ExtensionsDSLDeprecated
 import arrow.effects.deferredk.applicative.applicative
-import arrow.effects.deferredk.monad.flatMap
-import arrow.effects.typeclasses.Async
-import arrow.effects.typeclasses.Bracket
-import arrow.effects.typeclasses.ConcurrentEffect
-import arrow.effects.typeclasses.Disposable
-import arrow.effects.typeclasses.Effect
-import arrow.effects.typeclasses.ExitCase
-import arrow.effects.typeclasses.MonadDefer
-import arrow.effects.typeclasses.Proc
+import arrow.effects.deferredk.concurrent.concurrent
+import arrow.effects.typeclasses.*
 import arrow.extension
 import arrow.typeclasses.*
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import me.eugeniomarletti.kotlin.metadata.shadow.utils.join
-import arrow.typeclasses.Applicative
-import arrow.typeclasses.ApplicativeError
-import arrow.typeclasses.Functor
-import arrow.typeclasses.Monad
-import arrow.typeclasses.MonadError
-import arrow.typeclasses.Traverse
+import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 import arrow.effects.handleErrorWith as deferredHandleErrorWith
 import arrow.effects.runAsync as deferredRunAsync
@@ -117,6 +104,33 @@ interface DeferredKAsyncInstance : Async<ForDeferredK>, DeferredKMonadDeferInsta
 }
 
 @extension
+interface DeferredKConcurrentInstance : Concurrent<ForDeferredK>, DeferredKAsyncInstance {
+
+  override fun <A> Kind<ForDeferredK, A>.startF(ctx: CoroutineContext): Kind<ForDeferredK, Fiber<ForDeferredK, A>> {
+    val join = scope().asyncK(start = CoroutineStart.DEFAULT, ctx = ctx) { await() }
+    val cancel = DeferredK(start = CoroutineStart.LAZY) { join.cancel() }
+    return DeferredK.just(Fiber(join, cancel))
+  }
+
+  override fun <A, B> racePair(ctx: CoroutineContext,
+                               lh: Kind<ForDeferredK, A>,
+                               rh: Kind<ForDeferredK, B>): Kind<ForDeferredK, Either<Tuple2<A, Fiber<ForDeferredK, B>>, Tuple2<Fiber<ForDeferredK, A>, B>>> =
+    lh.startF(ctx).flatMap { fiberA ->
+      rh.startF(ctx).flatMap { fiberB ->
+        DeferredK.async<Either<Tuple2<A, Fiber<ForDeferredK, B>>, Tuple2<Fiber<ForDeferredK, A>, B>>> { cb ->
+          fiberA.join.fix().deferred.invokeOnCompletion { error ->
+            error?.let { cb(it.left()) } ?: cb((fiberA.join.fix().deferred.getCompleted() toT fiberB).left().right())
+          }
+          fiberB.join.fix().deferred.invokeOnCompletion { error ->
+            error?.let { cb(it.left()) } ?: cb((fiberA toT fiberB.join.fix().deferred.getCompleted()).right().right())
+          }
+        }
+      }
+    }
+
+}
+
+@extension
 interface DeferredKEffectInstance : Effect<ForDeferredK>, DeferredKAsyncInstance {
   override fun <A> Kind<ForDeferredK, A>.runAsync(cb: (Either<Throwable, A>) -> DeferredKOf<Unit>): DeferredK<Unit> =
     fix().deferredRunAsync(cb = cb)
@@ -133,59 +147,3 @@ object DeferredKContext : DeferredKConcurrentEffectInstance
 @Deprecated(ExtensionsDSLDeprecated)
 infix fun <A> ForDeferredK.Companion.extensions(f: DeferredKContext.() -> A): A =
   f(DeferredKContext)
-
-fun DeferredK.Companion.concurrent(): Concurrent<ForDeferredK> = object : Concurrent<ForDeferredK>, DeferredKAsyncInstance {
-
-  override fun <A> Kind<ForDeferredK, A>.startF(): Kind<ForDeferredK, Fiber<ForDeferredK, A>> {
-    val join = scope().asyncK(start = CoroutineStart.DEFAULT) { await() }
-    val cancel = DeferredK(start = CoroutineStart.LAZY) { join.cancel() }
-    return DeferredK.just(Fiber(join, cancel))
-  }
-
-  override fun <A, B> racePair(lh: Kind<ForDeferredK, A>, rh: Kind<ForDeferredK, B>): Kind<ForDeferredK, Either<Tuple2<A, Fiber<ForDeferredK, B>>, Tuple2<Fiber<ForDeferredK, A>, B>>> =
-    lh.startF().flatMap { fiberA ->
-      rh.startF().flatMap { fiberB ->
-        DeferredK.async<Either<Tuple2<A, Fiber<ForDeferredK, B>>, Tuple2<Fiber<ForDeferredK, A>, B>>> { cb ->
-          fiberA.join.fix().deferred.invokeOnCompletion { error ->
-            error?.let { cb(it.left()) } ?: cb((fiberA.join.fix().deferred.getCompleted() toT fiberB).left().right())
-          }
-          fiberB.join.fix().deferred.invokeOnCompletion { error ->
-            error?.let { cb(it.left()) } ?: cb((fiberA toT fiberB.join.fix().deferred.getCompleted()).right().right())
-          }
-        }
-      }
-    }
-
-}
-
-
-fun <F, A, B, C> Concurrent<F>.parMap(fa: Kind<F, A>, fb: Kind<F, B>, f: (A, B) -> C): Kind<F, C> =
-  fa.startF().flatMap { (joinA, _) ->
-    fb.startF().flatMap { (joinB, _) ->
-      joinA.flatMap { a ->
-        joinB.map { b ->
-          f(a, b)
-        }
-      }
-    }
-  }
-
-fun main(args: Array<String>) {
-  val one =  GlobalScope.asyncK {
-    delay(1000)
-    println("Sleep 1000")
-    1
-  }
-
-  val two = GlobalScope.asyncK {
-    delay(100)
-    println("Sleep 100")
-    2
-  }
-
-  DeferredK.concurrent().race(one, two)
-    .unsafeRunSync()
-    .let(::println)
-
-
-}
