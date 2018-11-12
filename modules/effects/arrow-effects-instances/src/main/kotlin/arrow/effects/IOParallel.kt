@@ -1,10 +1,14 @@
 package arrow.effects
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Tuple2
+import arrow.core.Tuple3
+import arrow.core.left
+import arrow.core.right
+import arrow.effects.instances.io.concurrentEffect.concurrentEffect
 import arrow.effects.internal.Platform.onceOnly
 import arrow.effects.internal.parMapCancellable2
 import arrow.effects.internal.parMapCancellable3
-import arrow.effects.instances.io.concurrentEffect.concurrentEffect
 import arrow.effects.typeclasses.Disposable
 import arrow.effects.typeclasses.Duration
 import java.util.concurrent.CountDownLatch

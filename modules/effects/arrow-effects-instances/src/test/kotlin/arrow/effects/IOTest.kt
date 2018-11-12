@@ -1,7 +1,13 @@
 package arrow.effects
 
 import arrow.Kind
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Left
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.Tuple3
+import arrow.core.right
 import arrow.effects.data.internal.IOCancellationException
 import arrow.effects.instances.io.async.async
 import arrow.effects.instances.io.monad.monad
@@ -243,7 +249,7 @@ class IOTest : UnitSpec() {
     }
 
     "unsafeRunTimed times out with None result" {
-      val never = IO.async<Int> { }
+      val never = IO.async<Int> {}
       val result = never.unsafeRunTimed(100.milliseconds)
       result shouldBe None
     }
@@ -320,7 +326,7 @@ class IOTest : UnitSpec() {
         IO.parallelMapN(newSingleThreadContext("here"),
           IO { Thread.currentThread().name },
           IO.defer { IO.just(Thread.currentThread().name) },
-          IO.async<String> { it(Thread.currentThread().name.right()) },
+          IO.async<String> { cb -> cb(Thread.currentThread().name.right()) },
           ::Tuple3)
           .unsafeRunSync()
 
@@ -331,7 +337,7 @@ class IOTest : UnitSpec() {
       IO.async { cb: (Either<Throwable, Int>) -> Unit ->
         val cancel =
           IO(newSingleThreadContext("RunThread")) { }
-            .flatMap { IO.async<Int> { Thread.sleep(500); it(1.right()) } }
+            .flatMap { IO.async<Int> { cb -> Thread.sleep(500); cb(1.right()) } }
             .unsafeRunAsyncCancellable(OnCancel.Silent) {
               cb(it)
             }
@@ -344,7 +350,7 @@ class IOTest : UnitSpec() {
       IO.async<Throwable> { cb ->
         val cancel =
           IO(newSingleThreadContext("RunThread")) { }
-            .flatMap { IO.async<Int> { Thread.sleep(500); it(1.right()) } }
+            .flatMap { IO.async<Int> { cb -> Thread.sleep(500); cb(1.right()) } }
             .unsafeRunAsyncCancellable(OnCancel.ThrowCancellationException) {
               it.fold({ t -> cb(t.right()) }, { _ -> })
             }
@@ -357,7 +363,7 @@ class IOTest : UnitSpec() {
       IO.async { cb: (Either<Throwable, Int>) -> Unit ->
         val cancel =
           IO(newSingleThreadContext("RunThread")) { }
-            .flatMap { IO.async<Int> { Thread.sleep(5000); } }
+            .flatMap { IO.async<Int> { _ -> Thread.sleep(5000); } }
             .unsafeRunAsyncCancellable(OnCancel.ThrowCancellationException) {
               cb(it)
             }

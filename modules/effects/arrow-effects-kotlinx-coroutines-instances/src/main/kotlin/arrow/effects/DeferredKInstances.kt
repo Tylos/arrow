@@ -5,13 +5,26 @@ import arrow.core.*
 import arrow.deprecation.ExtensionsDSLDeprecated
 import arrow.effects.deferredk.applicative.applicative
 import arrow.effects.deferredk.monad.flatMap
-import arrow.effects.typeclasses.*
+import arrow.effects.typeclasses.Async
+import arrow.effects.typeclasses.Bracket
+import arrow.effects.typeclasses.ConcurrentEffect
+import arrow.effects.typeclasses.Disposable
+import arrow.effects.typeclasses.Effect
+import arrow.effects.typeclasses.ExitCase
+import arrow.effects.typeclasses.MonadDefer
+import arrow.effects.typeclasses.Proc
 import arrow.extension
 import arrow.typeclasses.*
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import me.eugeniomarletti.kotlin.metadata.shadow.utils.join
+import arrow.typeclasses.Applicative
+import arrow.typeclasses.ApplicativeError
+import arrow.typeclasses.Functor
+import arrow.typeclasses.Monad
+import arrow.typeclasses.MonadError
+import arrow.typeclasses.Traverse
 import kotlin.coroutines.CoroutineContext
 import arrow.effects.handleErrorWith as deferredHandleErrorWith
 import arrow.effects.runAsync as deferredRunAsync
@@ -75,7 +88,15 @@ interface DeferredKMonadErrorInstance : MonadError<ForDeferredK, Throwable>, Def
 }
 
 @extension
-interface DeferredKMonadDeferInstance : MonadDefer<ForDeferredK>, DeferredKMonadErrorInstance {
+interface DeferredKBracketInstance : Bracket<ForDeferredK, Throwable>, DeferredKMonadErrorInstance {
+  override fun <A, B> Kind<ForDeferredK, A>.bracketCase(
+    use: (A) -> Kind<ForDeferredK, B>,
+    release: (A, ExitCase<Throwable>) -> Kind<ForDeferredK, Unit>): DeferredK<B> =
+    fix().bracketCase({ a -> use(a).fix() }, { a, e -> release(a, e).fix() })
+}
+
+@extension
+interface DeferredKMonadDeferInstance : MonadDefer<ForDeferredK>, DeferredKBracketInstance {
   override fun <A> defer(fa: () -> DeferredKOf<A>): DeferredK<A> =
     DeferredK.defer(fa = fa)
 }

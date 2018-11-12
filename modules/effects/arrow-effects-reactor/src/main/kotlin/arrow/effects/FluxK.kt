@@ -1,9 +1,14 @@
 package arrow.effects
 
 import arrow.Kind
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Eval
+import arrow.core.Left
+import arrow.core.Right
+import arrow.core.identity
 import arrow.effects.CoroutineContextReactorScheduler.asScheduler
 import arrow.effects.typeclasses.Disposable
+import arrow.effects.typeclasses.ExitCase
 import arrow.effects.typeclasses.Proc
 import arrow.higherkind
 import arrow.typeclasses.Applicative
@@ -27,6 +32,15 @@ data class FluxK<A>(val flux: Flux<A>) : FluxKOf<A>, FluxKKindedJ<A> {
 
   fun <B> flatMap(f: (A) -> FluxKOf<B>): FluxK<B> =
     flux.flatMap { f(it).fix().flux }.k()
+
+  fun <B> bracketCase(use: (A) -> FluxKOf<B>, release: (A, ExitCase<Throwable>) -> FluxKOf<Unit>): FluxK<B> =
+    flatMap { a ->
+      use(a).value()
+        .doOnError { release(a, ExitCase.Error(it)) }
+        .doOnCancel { release(a, ExitCase.Cancelled) }
+        .doOnComplete { release(a, ExitCase.Completed) }
+        .k()
+    }
 
   fun <B> concatMap(f: (A) -> FluxKOf<B>): FluxK<B> =
     flux.concatMap { f(it).fix().flux }.k()
@@ -81,8 +95,8 @@ data class FluxK<A>(val flux: Flux<A>) : FluxKOf<A>, FluxKKindedJ<A> {
 
     fun <A> runAsync(fa: Proc<A>): FluxK<A> =
       Flux.create { emitter: FluxSink<A> ->
-        fa { either: Either<Throwable, A> ->
-          either.fold({
+        fa { callback: Either<Throwable, A> ->
+          callback.fold({
             emitter.error(it)
           }, {
             emitter.next(it)

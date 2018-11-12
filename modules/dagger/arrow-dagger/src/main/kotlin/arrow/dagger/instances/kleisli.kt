@@ -5,13 +5,17 @@ import arrow.instances.KleisliApplicativeInstance
 import arrow.instances.KleisliFunctorInstance
 import arrow.instances.KleisliMonadErrorInstance
 import arrow.instances.KleisliMonadInstance
-import arrow.typeclasses.*
+import arrow.typeclasses.Applicative
+import arrow.typeclasses.ApplicativeError
+import arrow.typeclasses.Functor
+import arrow.typeclasses.Monad
+import arrow.typeclasses.MonadError
 import dagger.Module
 import dagger.Provides
 import javax.inject.Inject
 
 @Module
-abstract class KleisliInstances<F, D> {
+abstract class KleisliInstances<F, D, E> {
 
   @Provides
   fun kleisliFunctor(ev: DaggerKleisliFunctorInstance<F, D>): Functor<KleisliPartialOf<F, D>> = ev
@@ -30,20 +34,17 @@ abstract class KleisliInstances<F, D> {
 }
 
 class DaggerKleisliFunctorInstance<F, L> @Inject constructor(val FF: Functor<F>) : KleisliFunctorInstance<F, L> {
-  override fun FF(): Functor<F> = FF
+  override fun FFF(): Functor<F> = FF
 }
 
 class DaggerKleisliApplicativeInstance<F, L> @Inject constructor(val AF: Applicative<F>) : KleisliApplicativeInstance<F, L> {
-  override fun FF(): Applicative<F> = AF
-  override fun AF(): Applicative<F> = AF
+  override fun FFF(): Applicative<F> = AF
 }
 
 class DaggerKleisliMonadInstance<F, L> @Inject constructor(val MF: Monad<F>) : KleisliMonadInstance<F, L> {
-  override fun FF(): Monad<F> = MF
-  override fun MF(): Monad<F> = MF
+  override fun FFF(): Monad<F> = MF
 }
 
 class DaggerKleisliMonadErrorInstance<F, L> @Inject constructor(val MF: MonadError<F, L>) : KleisliMonadErrorInstance<F, L, L> {
-  override fun FF(): MonadError<F, L> = MF
-  override fun ME(): MonadError<F, L> = MF
+  override fun FFF(): MonadError<F, L> = MF
 }

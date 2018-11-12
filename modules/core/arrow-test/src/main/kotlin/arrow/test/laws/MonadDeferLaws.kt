@@ -1,7 +1,11 @@
 package arrow.test.laws
 
 import arrow.Kind
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Left
+import arrow.core.Right
+import arrow.core.Try
+import arrow.core.recover
 import arrow.effects.data.internal.BindingCancellationException
 import arrow.effects.typeclasses.MonadDefer
 import arrow.effects.typeclasses.bindingCancellable
@@ -14,18 +18,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
 
 object MonadDeferLaws {
-  fun <F> laws(SC: MonadDefer<F>, EQ: Eq<Kind<F, Int>>, EQ_EITHER: Eq<Kind<F, Either<Throwable, Int>>>, EQERR: Eq<Kind<F, Int>> = EQ): List<Law> =
-    MonadErrorLaws.laws(SC, EQERR, EQ_EITHER, EQ) + listOf(
+
+  fun <F> laws(SC: MonadDefer<F>, EQ: Eq<Kind<F, Int>>, EQ_EITHER: Eq<Kind<F, Either<Throwable, Int>>>): List<Law> =
+    BracketLaws.laws(SC, EQ, EQ_EITHER, EQ) + listOf(
       Law("Sync bind: binding blocks") { SC.asyncBind(EQ) },
-      Law("Sync bind: binding failure") { SC.asyncBindError(EQERR) },
+      Law("Sync bind: binding failure") { SC.asyncBindError(EQ) },
       Law("Sync bind: unsafe binding") { SC.asyncBindUnsafe(EQ) },
-      Law("Sync bind: unsafe binding failure") { SC.asyncBindUnsafeError(EQERR) },
+      Law("Sync bind: unsafe binding failure") { SC.asyncBindUnsafeError(EQ) },
       Law("Sync bind: binding in parallel") { SC.asyncParallelBind(EQ) },
       Law("Sync bind: binding cancellation before flatMap") { SC.asyncCancellationBefore(EQ) },
       Law("Sync bind: binding cancellation after flatMap") { SC.asyncCancellationAfter(EQ) },
       Law("Sync bind: bindingInContext cancellation before flatMap") { SC.inContextCancellationBefore(EQ) },
       Law("Sync bind: bindingInContext cancellation after flatMap") { SC.inContextCancellationAfter(EQ) },
-      Law("Sync bind: bindingInContext throw equivalent to raiseError") { SC.inContextErrorThrow(EQERR) },
+      Law("Sync bind: bindingInContext throw equivalent to raiseError") { SC.inContextErrorThrow(EQ) },
       Law("Sync bind: monad comprehensions binding in other threads equivalence") { SC.monadComprehensionsBindInContextEquivalent(EQ) }
     )
 

@@ -12,6 +12,7 @@ dependencies {
     testCompile project(':arrow-test')
     testCompile project(':arrow-free')
     testCompile project(':arrow-instances-free')
+    testCompile project(':arrow-data-instances-effects')
     testCompile project(':arrow-mtl')
 }
 

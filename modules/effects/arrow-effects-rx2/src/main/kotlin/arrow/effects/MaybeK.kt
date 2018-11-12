@@ -1,7 +1,12 @@
 package arrow.effects
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Eval
+import arrow.core.Left
+import arrow.core.Predicate
+import arrow.core.Right
 import arrow.effects.CoroutineContextRx2Scheduler.asScheduler
+import arrow.effects.typeclasses.ExitCase
 import arrow.effects.typeclasses.Proc
 import arrow.higherkind
 import io.reactivex.Maybe
@@ -23,6 +28,14 @@ data class MaybeK<A>(val maybe: Maybe<A>) : MaybeKOf<A>, MaybeKKindedJ<A> {
 
   fun <B> flatMap(f: (A) -> MaybeKOf<B>): MaybeK<B> =
     maybe.flatMap { f(it).fix().maybe }.k()
+
+  fun <B> bracketCase(use: (A) -> MaybeKOf<B>, release: (A, ExitCase<Throwable>) -> MaybeKOf<Unit>): MaybeK<B> =
+    flatMap { a ->
+      use(a).fix().maybe
+        .doOnSuccess { release(a, ExitCase.Completed) }
+        .doOnError { release(a, ExitCase.Error(it)) }
+        .k()
+    }
 
   fun <B> fold(ifEmpty: () -> B, ifSome: (A) -> B): B = maybe.blockingGet().let {
     if (it == null) ifEmpty() else ifSome(it)

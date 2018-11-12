@@ -4,9 +4,22 @@ import arrow.Kind
 import arrow.core.Either
 import arrow.deprecation.ExtensionsDSLDeprecated
 import arrow.effects.*
-import arrow.effects.typeclasses.*
+import arrow.effects.typeclasses.Async
+import arrow.effects.typeclasses.Bracket
+import arrow.effects.typeclasses.ConcurrentEffect
+import arrow.effects.typeclasses.Disposable
+import arrow.effects.typeclasses.Effect
+import arrow.effects.typeclasses.ExitCase
+import arrow.effects.typeclasses.MonadDefer
+import arrow.effects.typeclasses.Proc
 import arrow.extension
-import arrow.typeclasses.*
+import arrow.typeclasses.Applicative
+import arrow.typeclasses.ApplicativeError
+import arrow.typeclasses.Functor
+import arrow.typeclasses.Monad
+import arrow.typeclasses.MonadError
+import arrow.typeclasses.Monoid
+import arrow.typeclasses.Semigroup
 import kotlin.coroutines.CoroutineContext
 import arrow.effects.ap as ioAp
 import arrow.effects.handleErrorWith as ioHandleErrorWith
@@ -69,7 +82,22 @@ interface IOMonadErrorInstance : MonadError<ForIO, Throwable>, IOMonadInstance {
 }
 
 @extension
-interface IOMonadDeferInstance : MonadDefer<ForIO>, IOMonadErrorInstance {
+interface IOBracketInstance : Bracket<ForIO, Throwable>, IOMonadErrorInstance {
+  override fun <A, B> Kind<ForIO, A>.bracketCase(use: (A) -> Kind<ForIO, B>, release: (A, ExitCase<Throwable>) -> Kind<ForIO, Unit>): IO<B> =
+    fix().bracketCase({ a -> use(a).fix() }, { a, e -> release(a, e).fix() })
+
+  override fun <A, B> Kind<ForIO, A>.bracket(use: (A) -> Kind<ForIO, B>, release: (A) -> Kind<ForIO, Unit>): IO<B> =
+    fix().bracket({ a -> use(a).fix() }, { a -> release(a).fix() })
+
+  override fun <A> Kind<ForIO, A>.guarantee(finalizer: Kind<ForIO, Unit>): IO<A> =
+    fix().guarantee(finalizer.fix())
+
+  override fun <A> Kind<ForIO, A>.guaranteeCase(finalizer: (ExitCase<Throwable>) -> Kind<ForIO, Unit>): IO<A> =
+    fix().guaranteeCase { e -> finalizer(e).fix() }
+}
+
+@extension
+interface IOMonadDeferInstance : MonadDefer<ForIO>, IOBracketInstance {
   override fun <A> defer(fa: () -> IOOf<A>): IO<A> =
     IO.defer(fa)
 
