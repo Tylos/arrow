@@ -100,3 +100,17 @@ object DeferredKContext : DeferredKConcurrentEffectInstance
 
 infix fun <A> ForDeferredK.Companion.extensions(f: DeferredKContext.() -> A): A =
   f(DeferredKContext)
+
+fun DeferredK.Companion.concurrent(): Concurrent<ForDeferredK> = object : Concurrent<ForDeferredK>, DeferredKAsyncInstance {
+  override fun <A> Kind<ForDeferredK, A>.startF(): Kind<ForDeferredK, Fiber<ForDeferredK, A>> =
+    this.fix().map {
+      val join =  DeferredK {
+         await()
+       }
+      Fiber(join = join, cancel = ForDeferredK.)
+    }
+
+
+
+
+}

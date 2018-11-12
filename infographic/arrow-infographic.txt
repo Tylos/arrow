@@ -28,7 +28,7 @@
 [<typeclasses>Corecursive]<-[<instances>Corecursive Instances|FixCorecursiveInstance|MuCorecursiveInstance|NuCorecursiveInstance]
 [<typeclasses>Corecursive]<-[<typeclasses>Birecursive]
 [<typeclasses>Each]<-[<instances>Each Instances|EitherEachInstance|ListKEachInstance|MapKEachInstance|NonEmptyListEachInstance|OptionEachInstance|SequenceKEachInstance|TryEachInstance]
-[<typeclasses>Effect]<-[<instances>Effect Instances|IOEffectInstance|DeferredKConcurrentEffectInstance|FlowableKConcurrentEffectInstance|ObservableKConcurrentEffectInstance|SingleKConcurrentEffectInstance|FluxKConcurrentEffectInstance|MonoKConcurrentEffectInstance]
+[<typeclasses>Effect]<-[<instances>Effect Instances|IOEffectInstance|DeferredKConcurrentEffectInstance|FlowableKConcurrentEffectInstance|ObservableKConcurrentEffectInstance|SingleKConcurrentEffectInstance|FluxKConcurrentEffectInstance|MonoKConcurrentEffectInstance|IOConcurrentEffectInstance]
 [<typeclasses>Effect]<-[<typeclasses>ConcurrentEffect]
 [<typeclasses>Eq]<-[<instances>Eq Instances|ConstEqInstance|EitherEqInstance|IdEqInstance|OptionEqInstance|TryEqInstance|Tuple10EqInstance|Tuple2EqInstance|Tuple3EqInstance|Tuple4EqInstance|Tuple5EqInstance|Tuple6EqInstance|Tuple7EqInstance|Tuple8EqInstance|Tuple9EqInstance|IorEqInstance|ListKEqInstance|MapKEqInstance|NonEmptyListEqInstance|SequenceKEqInstance|SetKEqInstance|ValidatedEqInstance]
 [<typeclasses>FilterIndex]<-[<instances>FilterIndex Instances|ListKFilterIndexInstance|MapKFilterIndexInstance|NonEmptyListFilterIndexInstance|SequenceKFilterIndexInstance]
