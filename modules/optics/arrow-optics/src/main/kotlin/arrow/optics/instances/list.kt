@@ -1,9 +1,11 @@
 package arrow.optics.instances
 
 import arrow.Kind
-import arrow.core.*
+import arrow.core.ListInstances
+import arrow.core.left
+import arrow.core.right
+import arrow.core.toT
 import arrow.data.k
-import arrow.data.traverse
 import arrow.optics.Optional
 import arrow.optics.POptional
 import arrow.optics.Traversal
@@ -20,7 +22,7 @@ fun <A> ListInstances.traversal(): Traversal<List<A>, A> = ListTraversal()
 interface ListTraversal<A> : Traversal<List<A>, A> {
 
   override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> = FA.run {
-    s.k().traverse(FA, f).map { it.list }
+    s.k().traverse(FA, f)
   }
 
   companion object {
@@ -62,7 +64,7 @@ interface ListFilterIndexInstance<A> : FilterIndex<List<A>, Int, A> {
     override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> = FA.run {
       s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
         if (p(j)) f(a) else just(a)
-      }.map { it.list }
+      }
     }
   }
 
@@ -84,7 +86,7 @@ fun <A> ListInstances.index(): Index<List<A>, Int, A> = ListIndexInstance()
 interface ListIndexInstance<A> : Index<List<A>, Int, A> {
   override fun index(i: Int): Optional<List<A>, A> = POptional(
     getOrModify = { it.getOrNull(i)?.right() ?: it.left() },
-    set = { a -> { l -> l.mapIndexed { index: Int, aa: A -> if (index == i) a else aa } } }
+    set = { l, a -> l.mapIndexed { index: Int, aa: A -> if (index == i) a else aa } }
   )
 
   companion object {
