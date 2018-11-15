@@ -39,58 +39,58 @@ import io.reactivex.subjects.*
 
 val obs = Observable.fromArray(1, 2, 3, 4, 5).k()
 obs
-// ObservableK(observable=io.reactivex.internal.operators.observable.ObservableFromArray@3333b517)
+// ObservableK(observable=io.reactivex.internal.operators.observable.ObservableFromArray@1130110)
 ```
 
 ```kotlin
 val flow = Flowable.fromArray(1, 2, 3, 4, 5).k()
 flow
-// FlowableK(flowable=io.reactivex.internal.operators.flowable.FlowableFromArray@5c888073)
+// FlowableK(flowable=io.reactivex.internal.operators.flowable.FlowableFromArray@6ed9eeaa)
 ```
 
 ```kotlin
 val single = Single.fromCallable { 1 }.k()
 single
-// SingleK(single=io.reactivex.internal.operators.single.SingleFromCallable@7eaf640d)
+// SingleK(single=io.reactivex.internal.operators.single.SingleFromCallable@2eb5e577)
 ```
 
 ```kotlin
 val maybe = Maybe.fromCallable { 1 }.k()
 maybe
-// MaybeK(maybe=io.reactivex.internal.operators.maybe.MaybeFromCallable@6093d92a)
+// MaybeK(maybe=io.reactivex.internal.operators.maybe.MaybeFromCallable@3ecd9903)
 ```
 
 ```kotlin
 val subject = PublishSubject.create<Int>().k()
 subject
-// ObservableK(observable=io.reactivex.subjects.PublishSubject@56f3e1ed)
+// ObservableK(observable=io.reactivex.subjects.PublishSubject@8d6b776)
 ```
 
 You can return to their regular forms using the function `value()`.
 
 ```kotlin
 obs.value()
-// io.reactivex.internal.operators.observable.ObservableFromArray@3333b517
+// io.reactivex.internal.operators.observable.ObservableFromArray@1130110
 ```
 
 ```kotlin
 flow.value()
-// io.reactivex.internal.operators.flowable.FlowableFromArray@5c888073
+// io.reactivex.internal.operators.flowable.FlowableFromArray@6ed9eeaa
 ```
 
 ```kotlin
 single.value()
-// io.reactivex.internal.operators.single.SingleFromCallable@7eaf640d
+// io.reactivex.internal.operators.single.SingleFromCallable@2eb5e577
 ```
 
 ```kotlin
 maybe.value()
-// io.reactivex.internal.operators.maybe.MaybeFromCallable@6093d92a
+// io.reactivex.internal.operators.maybe.MaybeFromCallable@3ecd9903
 ```
 
 ```kotlin
 subject.value()
-// io.reactivex.subjects.PublishSubject@56f3e1ed
+// io.reactivex.subjects.PublishSubject@8d6b776
 ```
 
 ### Observable comprehensions

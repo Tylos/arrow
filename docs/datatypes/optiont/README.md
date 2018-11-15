@@ -184,7 +184,7 @@ import arrow.effects.observablek.applicative.*
 
 val optTVal = OptionT.just<ForObservableK, Int>(ObservableK.applicative(), 1)
 optTVal
-// OptionT(value=ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@18e87346))
+// OptionT(value=ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@73e9c638))
 ```
 
 or
@@ -192,14 +192,14 @@ or
 ```kotlin
 val optTVal = OptionT.fromOption<ForObservableK, Int>(ObservableK.applicative(), Some(1))
 optTVal
-// OptionT(value=ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@46235fd0))
+// OptionT(value=ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@210b969e))
 ```
 
 And back to the `ObservableK<Option<A>>` running the transformer
 
 ```kotlin
 optTVal.value()
-// ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@46235fd0)
+// ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@210b969e)
 ```
 
 So how would our function look if we implemented it with the OptionT monad transformer?

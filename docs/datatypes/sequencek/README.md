@@ -18,7 +18,7 @@ import arrow.*
 import arrow.data.*
 
 sequenceOf(1, 2, 3).k()
-// SequenceK(sequence=kotlin.collections.ArraysKt___ArraysKt$asSequence$$inlined$Sequence$1@43128bc5)
+// SequenceK(sequence=kotlin.collections.ArraysKt___ArraysKt$asSequence$$inlined$Sequence$1@5c9a5268)
 ```
 
 SequenceK derives many useful typeclasses. For instance, it has a [`SemigroupK`](/docs/typeclasses/semigroupk/) instance.

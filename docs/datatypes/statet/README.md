@@ -88,7 +88,7 @@ stackOperationsE(listOf("hello", "world", "!"))
 ```
 ```kotlin
 stackOperationsE(listOf())
-// Left(a=Line_3$StackError$StackEmpty@5e57dc93)
+// Left(a=Line_3$StackError$StackEmpty@bbb1029)
 ```
 
 As is immediately clear, this code while properly modelling the errors, has become more complex but our signature now represents a simple `Stack` as a `List` with an error domain.
@@ -129,7 +129,7 @@ stackOperationsS().runM(Either.monad<StackError>(), listOf("hello", "world", "!"
 ```
 ```kotlin
 stackOperationsS().runM(Either.monad<StackError>(), listOf())
-// Left(a=Line_3$StackError$StackEmpty@5e57dc93)
+// Left(a=Line_3$StackError$StackEmpty@bbb1029)
 ```
 
 While our code looks very similar to what we had before there are some key advantages. State management is now contained within `State` and we are dealing only with 1 monad instead of 2 nested monads so we can use monad bindings!
@@ -155,7 +155,7 @@ stackOperationsS2().runM(Either.monad<StackError>(), listOf("hello", "world", "!
 
 ```kotlin
 stackOperationsS2().runM(Either.monad<StackError>(), listOf())
-// Left(a=Line_3$StackError$StackEmpty@5e57dc93)
+// Left(a=Line_3$StackError$StackEmpty@bbb1029)
 ```
 
 ### Supported type classes

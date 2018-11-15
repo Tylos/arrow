@@ -47,7 +47,7 @@ import arrow.instances.*
 val stringEq = String.eq()
 
 stringEq
-// arrow.instances.StringKt$eq$1@3cbb9d89
+// arrow.instances.StringKt$eq$1@4d55596e
 ```
 
 ```kotlin

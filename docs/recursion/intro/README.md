@@ -33,7 +33,7 @@ import arrow.typeclasses.*
 import arrow.recursion.*
 
 Cons(3, Cons(2, Cons(1, Nil)))
-// Cons(head=3, tail=Cons(head=2, tail=Cons(head=1, tail=arrow.recursion.Nil@2373d903)))
+// Cons(head=3, tail=Cons(head=2, tail=Cons(head=1, tail=arrow.recursion.Nil@5dba82e3)))
 ```
 
 However, it would be nicer to have a function to do this for us. We can use arbitrary recursion to do this.
@@ -45,7 +45,7 @@ fun downFrom(i: Int): IntList =
   else Cons(i, downFrom(i - 1))
 
 downFrom(3)
-// Cons(head=3, tail=Cons(head=2, tail=Cons(head=1, tail=arrow.recursion.Nil@2373d903)))
+// Cons(head=3, tail=Cons(head=2, tail=Cons(head=1, tail=arrow.recursion.Nil@5dba82e3)))
 ```
 
 We can also use arbitrary recursion to do computation with this data structure. For example, we might want

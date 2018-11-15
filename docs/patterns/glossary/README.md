@@ -105,29 +105,29 @@ import arrow.instances.listk.traverse.*
 
 ```kotlin
 String.eq()
-// arrow.instances.StringKt$eq$1@4f50c7a2
+// arrow.instances.StringKt$eq$1@2cc38268
 ```
 
 ```kotlin
 Option.functor()
-// arrow.instances.option.functor.OptionFunctorInstanceKt$functor$1@caee923
+// arrow.instances.option.functor.OptionFunctorInstanceKt$functor$1@253a6ae9
 ```
 
 ```kotlin
 import arrow.instances.mapk.semigroup.*
 
 MapK.semigroup<String, Int>(Int.semigroup())
-// arrow.instances.mapk.semigroup.MapKSemigroupInstanceKt$semigroup$1@56fd268
+// arrow.instances.mapk.semigroup.MapKSemigroupInstanceKt$semigroup$1@57657433
 ```
 
 ```kotlin
 Either.monadError<Throwable>()
-// arrow.instances.either.monadError.EitherMonadErrorInstanceKt$monadError$1@7ba1ede4
+// arrow.instances.either.monadError.EitherMonadErrorInstanceKt$monadError$1@74b185d
 ```
 
 ```kotlin
 ListK.traverse()
-// arrow.instances.listk.traverse.ListKTraverseInstanceKt$traverse$2@1523ca89
+// arrow.instances.listk.traverse.ListKTraverseInstanceKt$traverse$2@2e99f01b
 ```
 
 If you're defining your own instances and would like for them to be discoverable in their corresponding datatypes' companion object, you can generate it by annotating them as `@extension`, and Arrow's [annotation processor](https://github.com/arrow-kt/arrow#additional-setup) will create the extension functions for you.
@@ -329,7 +329,7 @@ interface ListKFunctorInstance : Functor<ForListK>
 // Somewhere else in the codebase
 import arrow.instances.listk.functor.*
 ListK.functor()
-// arrow.instances.listk.functor.ListKFunctorInstanceKt$functor$1@62844210
+// arrow.instances.listk.functor.ListKFunctorInstanceKt$functor$1@2743432c
 ```
 
 The signature of `map` once the types have been replaced takes a parameter `Kind<ForListK, A>`, which is the receiver, and a mapping function from `A` to `B`. This means that map will work for all instances of `ListK<A>` for whatever the value of `A` can be.

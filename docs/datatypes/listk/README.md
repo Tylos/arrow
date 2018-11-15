@@ -64,7 +64,7 @@ fun andAnother() = Some(Math.random())
 
 val requests = listOf(Some(Math.random()), andAnother(), andAnother())
 requests.sequence(Option.applicative())
-// Some(ListK(list=[0.5897026310825058, 0.8926639408473828, 0.6583720040384099]))
+// Some(ListK(list=[0.3995981015179244, 0.4602967382080493, 0.34465523756780736]))
 ```
 
 If you want to aggregate the elements of a list into any other value you can use `foldLeft` and `foldRight` from [`Foldable`](/docs/typeclasses/foldable).

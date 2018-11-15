@@ -84,12 +84,12 @@ Tuple2(1000, 900).toAccount()
 
 ```kotlin
 Account(1000, 900).toHList()
-// HCons(head=1000, tail=HCons(head=900, tail=arrow.generic.HNil@7d08461c))
+// HCons(head=1000, tail=HCons(head=900, tail=arrow.generic.HNil@1369218d))
 ```
 
 ```kotlin
 Account(1000, 900).toHListLabeled()
-// HCons(head=Tuple2(a=balance, b=1000), tail=HCons(head=Tuple2(a=available, b=900), tail=arrow.generic.HNil@7d08461c))
+// HCons(head=Tuple2(a=balance, b=1000), tail=HCons(head=Tuple2(a=available, b=900), tail=arrow.generic.HNil@1369218d))
 ```
 
 ```kotlin
@@ -155,7 +155,7 @@ val asyncAvailable: DeferredK<Int> = DeferredK { 900 }
 ForDeferredK extensions { 
   mapToAccount(asyncBalance, asyncAvailable)
 }
-// DeferredK(deferred=LazyDeferredCoroutine{New}@58c64be0, scope=kotlinx.coroutines.GlobalScope@3394ed0d)
+// DeferredK(deferred=LazyDeferredCoroutine{New}@8684aa7, scope=kotlinx.coroutines.GlobalScope@16a8f712)
 ```
 
 #### Typeclass instances

@@ -294,21 +294,21 @@ Arrow provides the following `MonadError` instances for `Option`, `Try` and `Eit
 import arrow.instances.option.monadError.*
 
 Option.monadError()
-// arrow.instances.option.monadError.OptionMonadErrorInstanceKt$monadError$1@3814e676
+// arrow.instances.option.monadError.OptionMonadErrorInstanceKt$monadError$1@239ad30e
 ```
 
 ```kotlin
 import arrow.instances.`try`.monadError.*
 
 Try.monadError()
-// arrow.instances.try.monadError.TryMonadErrorInstanceKt$monadError$1@b730c97
+// arrow.instances.try.monadError.TryMonadErrorInstanceKt$monadError$1@201f95df
 ```
 
 ```kotlin
 import arrow.instances.either.monadError.*
 
 Either.monadError<NukeException>()
-// arrow.instances.either.monadError.EitherMonadErrorInstanceKt$monadError$1@33f84f50
+// arrow.instances.either.monadError.EitherMonadErrorInstanceKt$monadError$1@7930c3aa
 ```
 
 Let's now rewrite our program as a polymorphic function that will work over any datatype for which a `MonadError` instance exists.
