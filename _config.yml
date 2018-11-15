@@ -1,2 +1,3 @@
+baseurl: "/arrow"
 plugins:
   - jekyll-redirect-from

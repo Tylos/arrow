@@ -60,7 +60,7 @@ val lifted: (NetworkResult) -> NetworkResult = networkSuccessPrism.lift { succes
         success.copy(content = "different content")
 }
 lifted(NetworkResult.Failure)
-// Line_1$NetworkResult$Failure@67d70467
+// Line_1$NetworkResult$Failure@7a97332c
 ```
 
 We can also modify or lift functions using `Functors`

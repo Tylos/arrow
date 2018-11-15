@@ -204,14 +204,14 @@ import arrow.effects.observablek.applicative.*
 
 val eitherTVal = EitherT.just<ForObservableK, BizError, Int>(ObservableK.applicative(), 1)
 eitherTVal
-// EitherT(value=ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@585f1d0))
+// EitherT(value=ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@255146ce))
 ```
 
 And back to the `ObservableK<Either<BizError, A>>` running the transformer
 
 ```kotlin
 eitherTVal.fix().value
-// ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@585f1d0)
+// ObservableK(observable=io.reactivex.internal.operators.observable.ObservableJust@255146ce)
 ```
 
 So how would our function look if we implemented it with the EitherT monad transformer?
